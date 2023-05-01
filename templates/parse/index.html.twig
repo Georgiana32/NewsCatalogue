@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}News{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>News</h1>
+
+    <a class="btn btn-primary mb-3 mt-2" href="/parse/saved-items" role="button">Saved news</a>
+
+    <form action="/parse" method="get">
+        <input class="form-control mr-sm-2 mb-3" type="search" placeholder="Search" id="search" name="search" aria-label="Search" value="{{ searchParam }}">
+
+        <div class="d-flex mb-2">
+            <label for="sort">Sort</label>
+            <select id="sort" name="sort" class="form-select" style="margin-left: 8px; margin-right: 8px" >
+                <option value=""  hidden>Choose option</option>
+                <option value="asc" {% if sort == 'asc' %} selected {% endif %}>Ascendent</option>
+                <option value="desc" {% if sort == 'desc' %} selected {% endif %}>Descendent</option>
+            </select>
+
+            <label for="filterBy">By</label>
+            <select id="filterBy" name="filterBy" class="form-select" style="margin-left: 8px">
+                <option value=""  hidden>Choose option</option>
+                <option value="pubDate" {% if filterBy == 'pubDate' %} selected {% endif %}>Publication Date</option>
+                <option value="title" {% if filterBy == 'title' %} selected {% endif %}>Title</option>
+            </select>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input class="btn btn-primary" type="submit" value="Submit">
+        </div>
+    </form>
+    <br>
+
+    {% for item in news %}
+    <div class="card mb-2">
+        <div class="card-header d-flex w-100 justify-content-between">
+            <h4 class="mb-1"><a href="{{ item.link }}" style="color: black">{{ item.title }}</a></h4>
+            <small>{{ item.pubDate|date("d/m/Y H:m:s") }}</small>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ item.description }}</h5>
+            <p class="card-text">{{ item.creator.name }}</p>
+            <div class="d-flex w-100 justify-content-between">
+                <div class="category mr-4">
+                    {% for cat in item.category %}
+                        <span class="text-muted" style="font-size: small">{{ cat.name }}</span>
+                    {% endfor %}
+                </div>
+                <div class="d-flex flex-column-reverse" style="margin-left: 15px">
+                    <small><a href="/parse/save-news?news={{ item.toJSON }}" class="btn btn-primary">Save</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+</div>
+{% endblock %}
